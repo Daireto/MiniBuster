@@ -17,8 +17,10 @@ Content-type: {{contentType}}
 {}
 
 ###
-POST HTTP/1.1 http://{{host}}/maintenance HTTP/1.1
+POST http://{{host}}/maintenance HTTP/1.1
 Content-type: {{contentType}}
 
-{}
+{
+    "message": "hello world"
+}
 

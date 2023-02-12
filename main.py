@@ -11,7 +11,7 @@ from controllers import HomeController, MaintenanceController
 
 def startup():
     print(f'Application is running on port {env.PORT}')
-    # webbrowser.open(f'http://localhost:{env.PORT}') // TODO: Active when done project 
+    # webbrowser.open(f'http://localhost:{env.PORT}') // TODO: Active when done project
 
 
 def shutdown():
