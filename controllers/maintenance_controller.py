@@ -14,5 +14,5 @@ class MaintenanceController(BaseController):
         return self.templates.TemplateResponse('index.html', {'request': request, 'message': message})
 
     async def post(self, request: Request):
-        data = await request.json()
-        return JSONResponse({'message': data['message']})
+        data = await self.service.clear_temp()
+        return JSONResponse({'message': 'Clear successfully'})
