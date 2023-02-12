@@ -10,8 +10,8 @@ class MaintenanceController(BaseController):
     service = MaintenanceService()
     
     async def get(self, request: Request):
-        message = self.service.hello_world()
-        return self.templates.TemplateResponse('index.html', {'request': request, 'message': message})
+        await self.service.delete_history_chrome()
+        return JSONResponse({'message': 'Clear successfully'})
 
     async def post(self, request: Request):
         data = await self.service.clear_temp()

@@ -35,20 +35,19 @@ class MaintenanceService(BaseService):
         completed = subprocess.run(["powershell", "-Command", power_shell_cmd], capture_output=True)
         return completed
     
-    async def delete_history_chroome(self):
-        power_shell_cmd = r'''            
+    async def delete_history_chrome(self):
+        power_shell_cmd = r'''        
             $UserName = (whoami).Split('\')[1]
             $UserName  
-            $Items = @('Archived History', 
-                        'History',  
-                        'Cache', 
-                        'Visited Links') 
+            $Items = @("Cache", "Cache2\entries\", "ChromeDWriteFontCache", "Code Cache", "GPUCache", "JumpListIcons", "JumpListIconsOld", "JumpListIconsRecentClosed", "Media Cache", "History", "Service Worker", "Top Sites", "Visited Links", "Web Data") 
             $Folder = "C:\Users\$UserName\AppData\Local\Google\Chrome\User Data\Default" 
             $Items | % {  
                 if (Test-Path "$Folder\$_") { 
-                    Remove-Item "$Folder\$_"  
+                    Remove-Item "$Folder\$_" -Recurse
                 } 
-            } '''
+            } 
+            Remove-Dir "C:\users\$user\AppData\Local\Google\Chrome\User Data\SwReporter\"
+            '''
 
         completed = subprocess.run(["powershell", "-Command", power_shell_cmd], capture_output=True)
         return completed

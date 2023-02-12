@@ -1,4 +1,6 @@
 import uvicorn
+import webbrowser
+
 from starlette.applications import Starlette
 from starlette.routing import Route
 
@@ -9,6 +11,7 @@ from controllers import HomeController, MaintenanceController
 
 def startup():
     print(f'Application is running on port {env.PORT}')
+    # webbrowser.open(f'http://localhost:{env.PORT}') // TODO: Active when done project 
 
 
 def shutdown():
@@ -17,7 +20,7 @@ def shutdown():
 
 routes = [
     Route('/', HomeController),
-    Route('/maintenance', MaintenanceController),
+    Route('/maintenance/', MaintenanceController),
 ]
 
 
