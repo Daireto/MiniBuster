@@ -1,1 +1,1 @@
-from maintenance_service import MaintenanceService
+from .maintenance_service import MaintenanceService

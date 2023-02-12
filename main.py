@@ -1,3 +1,4 @@
+import uvicorn
 from starlette.applications import Starlette
 from starlette.routing import Route
 
@@ -23,3 +24,11 @@ app = Starlette(
     routes=routes,
     on_startup=[startup],
     on_shutdown=[shutdown])
+
+if __name__ == '__main__':
+    uvicorn.run(
+        app='main:app',
+        host='0.0.0.0',
+        port=8010,
+        log_level='info',
+        reload=True)
