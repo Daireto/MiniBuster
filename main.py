@@ -16,8 +16,8 @@ def shutdown():
 
 
 routes = [
-    Route('/', HomeController.home),
-    Route('/maintenance', MaintenanceController.maintenance),
+    Route('/', HomeController),
+    Route('/maintenance', MaintenanceController),
 ]
 
 

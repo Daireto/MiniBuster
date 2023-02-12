@@ -1,10 +1,18 @@
+from starlette.requests import Request
+from starlette.responses import JSONResponse
+
 from lib import BaseController
 from services import MaintenanceService
 
 
 class MaintenanceController(BaseController):
     
-    @classmethod
-    def maintenance(cls, request):
-        message = MaintenanceService.hello_world()
-        return cls.templates.TemplateResponse('index.html', {'request': request, 'message': message})
+    service = MaintenanceService()
+    
+    async def get(self, request: Request):
+        message = self.service.hello_world()
+        return self.templates.TemplateResponse('index.html', {'request': request, 'message': message})
+
+    async def post(self, request: Request):
+        data = await request.json()
+        return JSONResponse({'message': data['message']})

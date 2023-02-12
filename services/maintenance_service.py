@@ -3,6 +3,5 @@ from lib import BaseService
 
 class MaintenanceService(BaseService):
     
-    @classmethod
-    def hello_world(cls):
+    def hello_world(self):
         return "Hello, World!"
