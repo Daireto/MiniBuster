@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    {% include "layouts/header.html" %}
+</head>
+
+<body>
+    {% include "layouts/navbar.html" %}
+
+    <main>
+        <div class="container-fluid full-height toggle-bg">
+            <p class="toggle-text">Módulo de mantenimiento</p>
+            <button onclick="sendData()">Enviar</button>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    {% include "layouts/scripts.html" %}
+    <script src="/static/assets/site/js/ajax.js"></script>
+    <script src="/static/assets/site/js/maintenance.js"></script>
+</body>
+
+</html>

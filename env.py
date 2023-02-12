@@ -1,4 +1,5 @@
 # Application
+NAME='MiniBuster'
 DEBUG=True
 
 # Server

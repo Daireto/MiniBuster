@@ -1,6 +1,7 @@
 import uvicorn
 from starlette.applications import Starlette
-from starlette.routing import Route
+from starlette.routing import Route, Mount
+from starlette.staticfiles import StaticFiles
 
 import env
 
@@ -18,6 +19,7 @@ def shutdown():
 routes = [
     Route('/', HomeController),
     Route('/maintenance', MaintenanceController),
+    Mount('/static', app=StaticFiles(directory='static'), name="static"),
 ]
 
 
