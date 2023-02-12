@@ -2,15 +2,17 @@ import uvicorn
 from starlette.applications import Starlette
 from starlette.routing import Route
 
+import env
+
 from controllers import HomeController, MaintenanceController
 
 
 def startup():
-    print('Ready to start')
+    print(f'Application is running on port {env.PORT}')
 
 
 def shutdown():
-    print('Ready to shutdown')
+    print('Shutting down application...')
 
 
 routes = [
@@ -20,15 +22,15 @@ routes = [
 
 
 app = Starlette(
-    debug=True,
+    debug=env.DEBUG,
     routes=routes,
     on_startup=[startup],
     on_shutdown=[shutdown])
 
 if __name__ == '__main__':
     uvicorn.run(
-        app='main:app',
-        host='0.0.0.0',
-        port=8010,
-        log_level='info',
-        reload=True)
+        app=env.APP,
+        host=env.HOST,
+        port=env.PORT,
+        log_level=env.LOG_LEVEL,
+        reload=env.RELOAD)
