@@ -11,7 +11,7 @@ class MaintenanceController(BaseController):
     service = MaintenanceService    ()
 
     async def get(self, request: Request):
-        await self.service.delete_history_chrome()
+        response = await run_in_threadpool(self.service.delete_history_chrome)
         return JSONResponse({'message': 'Clear browser successfully'})
 
     async def post(self, request: Request):

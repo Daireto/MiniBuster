@@ -5,7 +5,6 @@ from lib import BaseService
 
 class MaintenanceService(BaseService):
     def clear_temp(self):
-        print('hola')
         options = {
             'clear_temps': True,
             'recycle_bin': False
@@ -44,7 +43,16 @@ class MaintenanceService(BaseService):
         completed = subprocess.run(["powershell", "-Command", power_shell_cmd], capture_output=True)
         return completed
 
-    async def delete_history_chrome(self):
+    def delete_history_chrome(self):
+
+        cmd = 'powershell "Get-Package -ProviderName Programs -IncludeWindowsInstaller -Name vivaldi,*Opera*,"Microsoft Edge","Google Chrome"'
+        print(cmd)
+        proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+        for line in proc.stdout:
+                print(line)
+                # print(line.decode().rstrip())
+
+
         power_shell_cmd = r'''
             $UserName = (whoami).Split('\')[1]
             $UserName
@@ -60,4 +68,6 @@ class MaintenanceService(BaseService):
 
         completed = subprocess.run(["powershell", "-Command", power_shell_cmd], capture_output=True)
         return completed
+
+
 
