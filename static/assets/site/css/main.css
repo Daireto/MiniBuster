@@ -21,6 +21,10 @@ canvas {
     -ms-user-select: none;
 }
 
+.canvas-holder {
+    max-width: 400px;
+}
+
 .full-height {
     min-height: 100% !important;
 }
