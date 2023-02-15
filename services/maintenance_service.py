@@ -1,4 +1,6 @@
-import psutil, os
+import os
+import psutil
+import subprocess
 
 from lib import BaseService
 
@@ -7,7 +9,7 @@ import env
 
 class MaintenanceService(BaseService):
     
-    def get_config(self) -> dict[str, str | bool]:
+    def get_config(self) -> dict[str, object]:
         return env.DEFAULT_CONFIG
 
     def get_resources(self) -> dict[str, float]:
