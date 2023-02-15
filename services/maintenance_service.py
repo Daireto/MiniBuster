@@ -18,6 +18,9 @@ class MaintenanceService(BaseService):
             'memory': psutil.virtual_memory().percent,
             'disk': psutil.disk_usage(os.getcwd()).percent
         }
+    
+    def execute_maintenance(self, config: dict[str, object]):
+        return 'Hello, World!'
 
     def clear_temp(self) -> subprocess.CompletedProcess[bytes]:
         options = {

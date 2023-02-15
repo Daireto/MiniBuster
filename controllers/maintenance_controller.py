@@ -22,4 +22,5 @@ class MaintenanceController(BaseController):
     @classmethod
     async def submit(cls, request: Request) -> JSONResponse:
         data = await request.json()
-        return JSONResponse({'message': data['message']})
+        response = cls.service.execute_maintenance(data)
+        return JSONResponse({'message': response})
