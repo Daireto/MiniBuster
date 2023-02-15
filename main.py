@@ -2,6 +2,8 @@ import uvicorn
 from starlette.applications import Starlette
 from starlette.routing import Route, Mount
 from starlette.staticfiles import StaticFiles
+from starlette.middleware import Middleware
+from starlette.middleware.cors import CORSMiddleware
 
 import env
 
@@ -17,15 +19,23 @@ def shutdown():
 
 
 routes = [
-    Route('/', HomeController),
-    Route('/maintenance', MaintenanceController),
+    Route('/', HomeController.home_page, methods=['GET']),
+    Route('/maintenance', MaintenanceController.main_page, methods=['GET']),
+    Route('/maintenance', MaintenanceController.submit, methods=['POST']),
+    Route('/maintenance/get_resources', MaintenanceController.get_resources, methods=['GET']),
     Mount('/static', app=StaticFiles(directory='static'), name="static"),
+]
+
+
+middleware = [
+    Middleware(CORSMiddleware, allow_origins=['*'])
 ]
 
 
 app = Starlette(
     debug=env.DEBUG,
     routes=routes,
+    middleware=middleware,
     on_startup=[startup],
     on_shutdown=[shutdown])
 

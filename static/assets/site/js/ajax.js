@@ -1,4 +1,4 @@
-const baseUrl = 'http://127.0.0.1:8010/';
+const baseUrl = 'http://127.0.0.1:8010';
 
 const get = (url, data) => {
     return new Promise((resolve, reject) => {
