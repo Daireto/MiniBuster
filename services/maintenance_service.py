@@ -1,10 +1,14 @@
 import subprocess
+import psutil
+import os
 
 from lib import BaseService
+from models.resources import Resources
 
 
 class MaintenanceService(BaseService):
-    def clear_temp(self):
+
+    def clear_temp(self) -> subprocess.CompletedProcess[bytes]:
         options = {
             'clear_temps': True,
             'recycle_bin': False
@@ -43,7 +47,7 @@ class MaintenanceService(BaseService):
         completed = subprocess.run(["powershell", "-Command", power_shell_cmd], capture_output=True)
         return completed
 
-    def delete_history_chrome(self):
+    def delete_history_chrome(self) -> subprocess.CompletedProcess[bytes]:
 
         cmd = 'powershell "Get-Package -ProviderName Programs -IncludeWindowsInstaller -Name vivaldi,*Opera*,"Microsoft Edge","Google Chrome"'
         print(cmd)
@@ -68,6 +72,17 @@ class MaintenanceService(BaseService):
 
         completed = subprocess.run(["powershell", "-Command", power_shell_cmd], capture_output=True)
         return completed
+
+    def get_resources(self) -> Resources:
+        data: Resources = {'cpu':0.0, 'memory':0.0, 'disk':0.0}
+        obj_Disk = psutil.disk_usage('/')
+
+        data = {
+            'cpu': psutil.cpu_percent(),
+            'memory': psutil.virtual_memory().percent,
+            'disk': obj_Disk.percent
+        }
+        return data
 
 
 

@@ -6,7 +6,7 @@ from starlette.routing import Route
 
 import env
 
-from controllers import HomeController, MaintenanceController
+from controllers import HomeController, BrowsersController, ResourceController, ClearController
 
 
 def startup():
@@ -20,7 +20,9 @@ def shutdown():
 
 routes = [
     Route('/', HomeController),
-    Route('/maintenance/', MaintenanceController),
+    Route('/maintenance/delete_history_chrome', BrowsersController),
+    Route('/maintenance/clear_temp', ClearController),
+    Route('/maintenance/resources/', ResourceController),
 ]
 
 

@@ -5,16 +5,31 @@ from starlette.concurrency import run_in_threadpool
 from lib import BaseController
 from services import MaintenanceService
 
+class BrowsersController(BaseController):
 
-class MaintenanceController(BaseController):
-
-    service = MaintenanceService    ()
+    service = MaintenanceService()
 
     async def get(self, request: Request):
+        response = request.json()
         response = await run_in_threadpool(self.service.delete_history_chrome)
         return JSONResponse({'message': 'Clear browser successfully'})
 
-    async def post(self, request: Request):
+
+class ClearController(BaseController):
+
+    service = MaintenanceService()
+
+    async def get(self, request: Request):
+        response = request.json()
         response = await run_in_threadpool(self.service.clear_temp)
+        return JSONResponse({'message': 'Clear browser successfully'})
+
+
+class ResourceController(BaseController):
+
+    service = MaintenanceService()
+
+    async def get(self, request: Request):
+        response = await run_in_threadpool(self.service.get_resources)
         print(response)
-        return JSONResponse({'message': 'Clear cache successfully'})
+        return JSONResponse(response)
