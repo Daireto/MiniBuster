@@ -24,13 +24,6 @@ DEFAULT_CONFIG = {
             "extensions": False,
             "passwords": True
         },
-        "firefox": {
-            "history": True,
-            "cache": True,
-            "cookies": True,
-            "extensions": False,
-            "passwords": True
-        },
         "opera": {
             "history": True,
             "cache": True,
@@ -39,13 +32,6 @@ DEFAULT_CONFIG = {
             "passwords": True
         },
         "edge": {
-            "history": True,
-            "cache": True,
-            "cookies": True,
-            "extensions": False,
-            "passwords": True
-        },
-        "brave": {
             "history": True,
             "cache": True,
             "cookies": True,
