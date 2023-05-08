@@ -9,6 +9,9 @@ PORT = 8010
 LOG_LEVEL = 'info'
 RELOAD = True
 
+#database
+DATABASE_URL = 'route database'#//FIXME
+
 # Maintenance
 DEFAULT_CONFIG = {
     "system": {
