@@ -1,6 +1,6 @@
 from starlette.requests import Request
 from starlette.responses import JSONResponse
-from starlette.concurrency import run_in_threadpool
+from starlette.templating import _TemplateResponse
 
 from lib import BaseController
 from services import MaintenanceService
@@ -8,28 +8,18 @@ from services import MaintenanceService
 class BrowsersController(BaseController):
 
     service = MaintenanceService()
+    base_dir = 'maintenance'
 
-    async def get(self, request: Request):
-        response = request.json()
-        response = await run_in_threadpool(self.service.delete_history_chrome)
-        return JSONResponse({'message': 'Clear browser successfully'})
+    @classmethod
+    async def main_page(cls, request: Request) -> _TemplateResponse:
+        return cls.templates.TemplateResponse(f'{cls.base_dir}/maintenance.html', {'request': request, 'config': cls.service.get_config()})
 
+    @classmethod
+    async def get_resources(cls, request: Request) -> JSONResponse:
+        return JSONResponse(cls.service.get_resources())
 
-class ClearController(BaseController):
-
-    service = MaintenanceService()
-
-    async def get(self, request: Request):
-        response = request.json()
-        response = await run_in_threadpool(self.service.clear_temp)
-        return JSONResponse({'message': 'Clear browser successfully'})
-
-
-class ResourceController(BaseController):
-
-    service = MaintenanceService()
-
-    async def get(self, request: Request):
-        response = await run_in_threadpool(self.service.get_resources)
-        print(response)
-        return JSONResponse(response)
+    @classmethod
+    async def submit(cls, request: Request) -> JSONResponse:
+        data = await request.json()
+        response = cls.service.execute_maintenance(data)
+        return JSONResponse({'message': response})

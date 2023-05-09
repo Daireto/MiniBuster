@@ -1,0 +1,107 @@
+@import url('/static/assets/site/css/modules.css');
+@import url('/static/assets/site/css/navbar-icons.css');
+
+html {
+    visibility: hidden;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+main {
+    height: calc(100vh - 88px);
+}
+
+canvas {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+.canvas-holder {
+    max-width: 400px;
+}
+
+.full-height {
+    min-height: 100% !important;
+}
+
+#navbar {
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+}
+
+.navbar-brand {
+    align-items: center;
+    display: flex;
+}
+
+.brand-image {
+    width: 50px;
+    height: 60px;
+    margin-right: 2px;
+}
+
+.brand-name {
+    color: rgb(0, 89, 255);
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.nav-link:hover {
+    color: #1500ff !important;
+    transition: all .1s ease-out;
+}
+
+.nav-link.text-white:hover {
+    color: #ffe600 !important;
+    transition: all .1s ease-out;
+}
+
+.fab {
+    background-repeat: no-repeat !important;
+    background-size: cover;
+    display: inline-block;
+    height: 20px;
+    width: 20px;
+}
+
+.card {
+    width: 18rem;
+    transition: all .1s ease-out;
+}
+
+.card:hover {
+    background-color: rgba(70, 70, 70, 0.575) !important;
+    cursor: pointer;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.card-icon {
+    height: 40px !important;
+    width: 40px !important;
+}
+
+.filter-to-white {
+    filter: invert(97%) sepia(3%) saturate(10%) hue-rotate(45deg) brightness(103%) contrast(102%);
+}
+
+.shadow-light {
+    box-shadow: 0px 6px 10px -2px rgba(0, 0, 0, 0.2);
+}
+
+.shadow-dark {
+    box-shadow: 0px 6px 10px -2px rgba(255, 255, 255, 0.2);
+}
+
+.border-light {
+    border-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+.border-dark {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
