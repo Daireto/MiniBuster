@@ -5,7 +5,7 @@ from starlette.templating import _TemplateResponse
 from lib import BaseController
 from services import MaintenanceService
 
-class BrowsersController(BaseController):
+class MaintenanceController(BaseController):
 
     service = MaintenanceService()
     base_dir = 'maintenance'

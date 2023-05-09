@@ -6,6 +6,9 @@ import sqlalchemy
 from starlette.responses import JSONResponse
 from sqlalchemy_utils import database_exists
 
+from lib import BaseService
+
+
 DATABASE_URL = env.DATABASE_URL
 
 metadata = sqlalchemy.MetaData()
@@ -55,105 +58,106 @@ async def lifespan(app):
     await database.disconnect()
 
 
-async def get_configurations(request) -> JSONResponse:
-    try:
-        query = configuration.select()
-        results = await database.fetch_all(query)
-        content = [
-            {
-                "id": result["id"],
-                "id_user": result["id_user"],
-                "active": result["active"],
-                "clean_recycle_bin": result["clean_recycle_bin"],
-                "clean_temp": result["clean_temp"],
-                "clean_browsers": result["clean_browsers"]
-            }
-            for result in results
-        ]
-        return JSONResponse(content)
-    except Exception as error:
-        return JSONResponse({}, 400)
+class DatabaseService(BaseService):
+    async def get_configurations(request) -> JSONResponse:
+        try:
+            query = configuration.select()
+            results = await database.fetch_all(query)
+            content = [
+                {
+                    "id": result["id"],
+                    "id_user": result["id_user"],
+                    "active": result["active"],
+                    "clean_recycle_bin": result["clean_recycle_bin"],
+                    "clean_temp": result["clean_temp"],
+                    "clean_browsers": result["clean_browsers"]
+                }
+                for result in results
+            ]
+            return JSONResponse(content)
+        except Exception as error:
+            return JSONResponse({}, 400)
 
-async def set_configuration(request) -> JSONResponse:
-    try:
-        data = await request.json()
-        query = configuration.insert().values(
-            id=data["id"],
-            id_user=data["id_user"],
-            active=data["active"],
-            clean_recycle_bin=data["clean_recycle_bin"],
-            clean_temp=data["clean_temp"],
-            clean_browsers=data["clean_browsers"]
-        )
-        await database.execute(query)
-        return JSONResponse({}, 200)
-    except Exception as error:
-        return JSONResponse({}, 400)
+    async def set_configuration(request) -> JSONResponse:
+        try:
+            data = await request.json()
+            query = configuration.insert().values(
+                id=data["id"],
+                id_user=data["id_user"],
+                active=data["active"],
+                clean_recycle_bin=data["clean_recycle_bin"],
+                clean_temp=data["clean_temp"],
+                clean_browsers=data["clean_browsers"]
+            )
+            await database.execute(query)
+            return JSONResponse({}, 200)
+        except Exception as error:
+            return JSONResponse({}, 400)
 
-async def get_history(request) -> JSONResponse:
-    try:
-        query = history.select()
-        results = await database.fetch_all(query)
-        content = [
-            {
-                "id": result["id"],
-                "id_configuration": result["id_configuration"],
-                "deleted": result["deleted"],
-                "state": result["state"],
-                "message_error": result["message_error"],
-                "date": result["date"]
-            }
-            for result in results
-        ]
-        return JSONResponse(content)
-    except Exception as error:
-        return JSONResponse({}, 400)
+    async def get_history(request) -> JSONResponse:
+        try:
+            query = history.select()
+            results = await database.fetch_all(query)
+            content = [
+                {
+                    "id": result["id"],
+                    "id_configuration": result["id_configuration"],
+                    "deleted": result["deleted"],
+                    "state": result["state"],
+                    "message_error": result["message_error"],
+                    "date": result["date"]
+                }
+                for result in results
+            ]
+            return JSONResponse(content)
+        except Exception as error:
+            return JSONResponse({}, 400)
 
-async def set_history(request) -> JSONResponse:
-    try:
-        data = await request.json()
-        query = history.insert().values(
-            id=data["id"],
-            id_configuration=data["id_configuration"],
-            deleted=data["deleted"],
-            state=data["state"],
-            message_error=data["message_error"],
-            date=data["date"]
-        )
-        await database.execute(query)
-        return JSONResponse({}, 200)
-    except Exception as error:
-        return JSONResponse({}, 400)
+    async def set_history(request) -> JSONResponse:
+        try:
+            data = await request.json()
+            query = history.insert().values(
+                id=data["id"],
+                id_configuration=data["id_configuration"],
+                deleted=data["deleted"],
+                state=data["state"],
+                message_error=data["message_error"],
+                date=data["date"]
+            )
+            await database.execute(query)
+            return JSONResponse({}, 200)
+        except Exception as error:
+            return JSONResponse({}, 400)
 
-async def get_user(request) -> JSONResponse:
-    try:
-        query = user.select()
-        results = await database.fetch_all(query)
-        content = [
-            {
-                "id": result["id"],
-                "name": result["name"],
-                "last_session": result["last_session"],
-                "so": result["so"],
-                "device": result["device"]
-            }
-            for result in results
-        ]
-        return JSONResponse(content)
-    except Exception as error:
-        return JSONResponse({}, 400)
+    async def get_user(request) -> JSONResponse:
+        try:
+            query = user.select()
+            results = await database.fetch_all(query)
+            content = [
+                {
+                    "id": result["id"],
+                    "name": result["name"],
+                    "last_session": result["last_session"],
+                    "so": result["so"],
+                    "device": result["device"]
+                }
+                for result in results
+            ]
+            return JSONResponse(content)
+        except Exception as error:
+            return JSONResponse({}, 400)
 
-async def set_user(request) -> JSONResponse:
-    try:
-        data = await request.json()
-        query = user.insert().values(
-            id=data["id"],
-            name=data["name"],
-            last_session=data["last_session"],
-            so=data["so"],
-            device=data["device"]
-        )
-        await database.execute(query)
-        return JSONResponse({}, 200)
-    except Exception as error:
-        return JSONResponse({}, 400)
+    async def set_user(request) -> JSONResponse:
+        try:
+            data = await request.json()
+            query = user.insert().values(
+                id=data["id"],
+                name=data["name"],
+                last_session=data["last_session"],
+                so=data["so"],
+                device=data["device"]
+            )
+            await database.execute(query)
+            return JSONResponse({}, 200)
+        except Exception as error:
+            return JSONResponse({}, 400)

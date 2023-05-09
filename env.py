@@ -10,7 +10,7 @@ LOG_LEVEL = 'info'
 RELOAD = True
 
 #database
-DATABASE_URL = 'route database'#//FIXME
+DATABASE_URL = 'sqlite:///C:\\sqlitedbs\\minibuster.db'
 
 # Maintenance
 DEFAULT_CONFIG = {

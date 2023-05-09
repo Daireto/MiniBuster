@@ -3,11 +3,12 @@ import webbrowser
 from starlette.applications import Starlette
 from starlette.routing import Route, Mount
 from starlette.staticfiles import StaticFiles
-from starlette.middleware import Msiddleware
+from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
 
 import env
-from controllers import HomeController, MaintenanceController
+from controllers import HomeController
+from services.database_service import lifespan
 from lib.system_tray_icon import SystemTrayIcon
 
 
@@ -34,6 +35,7 @@ middleware = [
 
 
 app = Starlette(
+    lifespan=lifespan,
     debug=env.DEBUG,
     routes=routes,
     middleware=middleware,
