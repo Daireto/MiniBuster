@@ -1,4 +1,3 @@
-import uvicorn
 import webbrowser
 
 from starlette.applications import Starlette
@@ -8,17 +7,16 @@ from starlette.middleware import Msiddleware
 from starlette.middleware.cors import CORSMiddleware
 
 import env
-
-from controllers import HomeController, BrowsersController, ResourceController, ClearController
+from controllers import HomeController, MaintenanceController
+from lib.system_tray_icon import SystemTrayIcon
 
 
 def startup():
-    print(f'Application is running on port {env.PORT}')
-    # webbrowser.open(f'http://localhost:{env.PORT}') // TODO: Active when done project
+    webbrowser.open(f'http://localhost:{env.PORT}')
 
 
 def shutdown():
-    print('Shutting down application...')
+    print('Deteniendo la aplicación...')
 
 
 routes = [
@@ -42,10 +40,6 @@ app = Starlette(
     on_startup=[startup],
     on_shutdown=[shutdown])
 
+
 if __name__ == '__main__':
-    uvicorn.run(
-        app=env.APP,
-        host=env.HOST,
-        port=env.PORT,
-        log_level=env.LOG_LEVEL,
-        reload=env.RELOAD)
+    SystemTrayIcon.start(app)
