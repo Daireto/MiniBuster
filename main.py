@@ -8,15 +8,8 @@ from starlette.middleware.cors import CORSMiddleware
 
 import env
 from controllers import HomeController, MaintenanceController
+from services.database_service import lifespan
 from lib.system_tray_icon import SystemTrayIcon
-
-
-def startup():
-    webbrowser.open(f'http://localhost:{env.PORT}')
-
-
-def shutdown():
-    print('Deteniendo la aplicación...')
 
 
 routes = [
@@ -35,11 +28,10 @@ middleware = [
 
 
 app = Starlette(
+    lifespan=lifespan,
     debug=env.DEBUG,
     routes=routes,
-    middleware=middleware,
-    on_startup=[startup],
-    on_shutdown=[shutdown])
+    middleware=middleware)
 
 
 if __name__ == '__main__':
