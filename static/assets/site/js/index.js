@@ -7,5 +7,10 @@ $(document).ready(async () => {
     createGauge('cpu', resources['cpu']);
     createGauge('memory', resources['memory']);
     createGauge('disk', resources['disk']);
-    // TODO: Refresh data with setInterval
+    setInterval(async () => {
+        const resources = await get('/maintenance/get_resources');
+        updateGauge('cpu', resources['cpu']);
+        updateGauge('memory', resources['memory']);
+        updateGauge('disk', resources['disk']);
+    }, 1000);
 });
