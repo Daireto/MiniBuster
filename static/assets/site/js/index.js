@@ -12,5 +12,5 @@ $(document).ready(async () => {
         updateGauge('cpu', resources['cpu']);
         updateGauge('memory', resources['memory']);
         updateGauge('disk', resources['disk']);
-    }, 1000);
+    }, 3000);
 });
