@@ -9,11 +9,13 @@ PORT = 8010
 LOG_LEVEL = 'info'
 RELOAD = True
 
+#database
+DATABASE_URL = 'sqlite:///'
+
 # Maintenance
 DEFAULT_CONFIG = {
     "system": {
         "temp_files": True,
-        "cache": True,
         "recycle_bin": False
     },
     "browsers": {
