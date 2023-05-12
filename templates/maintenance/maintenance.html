@@ -10,8 +10,95 @@
 
     <main>
         <div class="container-fluid full-height toggle-bg">
-            <p class="toggle-text">Módulo de mantenimiento</p>
-            <button onclick="sendData()">Enviar</button>
+            <div class="toggle-text px-5 mx-5">
+                <h5 class="py-4">Seleccione los elementos que desea eliminar:</h5>
+                <div class="row">
+                    <div class="col">
+                        <h6>Sistema</h6>
+                        <div class="form-check ms-4">
+                            <input class="form-check-input" id="system-temp_files" type="checkbox" aria-label="Limpiar archivos temporales">
+                            <label for="system-temp_files" class="form-check-label">Temporales</label>
+                        </div>
+                        <div class="form-check ms-4">
+                            <input class="form-check-input" id="system-recycle_bin" type="checkbox" aria-label="Limpiar papelera de reciclaje">
+                            <label for="system-recycle_bin" class="form-check-label">Papelera</label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <h6>Chrome</h6>
+                        <div class="form-check ms-4">
+                            <input class="form-check-input" id="chrome-history" type="checkbox" aria-label="Limpiar historial de Chrome">
+                            <label for="chrome-history" class="form-check-label">Historial</label>
+                        </div>
+                        <div class="form-check ms-4">
+                            <input class="form-check-input" id="chrome-cache" type="checkbox" aria-label="Limpiar la caché de Chrome">
+                            <label for="chrome-cache" class="form-check-label">Caché</label>
+                        </div>
+                        <div class="form-check ms-4">
+                            <input class="form-check-input" id="chrome-cookies" type="checkbox" aria-label="Limpiar las cookies de Chrome">
+                            <label for="chrome-cookies" class="form-check-label">Cookies</label>
+                        </div>
+                        <div class="form-check ms-4">
+                            <input class="form-check-input" id="chrome-extensions" type="checkbox" aria-label="Limpiar las extensiones de Chrome">
+                            <label for="chrome-extensions" class="form-check-label">Extensiones</label>
+                        </div>
+                        <div class="form-check ms-4">
+                            <input class="form-check-input" id="chrome-passwords" type="checkbox" aria-label="Limpiar las contraseñas de Chrome">
+                            <label for="chrome-passwords" class="form-check-label">Contraseñas</label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <h6>Edge</h6>
+                        <div class="form-check ms-4">
+                            <input class="form-check-input" id="edge-history" type="checkbox" aria-label="Limpiar historial de Edge">
+                            <label for="edge-history" class="form-check-label">Historial</label>
+                        </div>
+                        <div class="form-check ms-4">
+                            <input class="form-check-input" id="edge-cache" type="checkbox" aria-label="Limpiar la caché de Edge">
+                            <label for="edge-cache" class="form-check-label">Caché</label>
+                        </div>
+                        <div class="form-check ms-4">
+                            <input class="form-check-input" id="edge-cookies" type="checkbox" aria-label="Limpiar las cookies de Edge">
+                            <label for="edge-cookies" class="form-check-label">Cookies</label>
+                        </div>
+                        <div class="form-check ms-4">
+                            <input class="form-check-input" id="edge-extensions" type="checkbox" aria-label="Limpiar las extensiones de Edge">
+                            <label for="edge-extensions" class="form-check-label">Extensiones</label>
+                        </div>
+                        <div class="form-check ms-4">
+                            <input class="form-check-input" id="edge-passwords" type="checkbox" aria-label="Limpiar las contraseñas de Edge">
+                            <label for="edge-passwords" class="form-check-label">Contraseñas</label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <h6>Opera</h6>
+                        <div class="form-check ms-4">
+                            <input class="form-check-input" id="opera-history" type="checkbox" aria-label="Limpiar historial de Opera">
+                            <label for="opera-history" class="form-check-label">Historial</label>
+                        </div>
+                        <div class="form-check ms-4">
+                            <input class="form-check-input" id="opera-cache" type="checkbox" aria-label="Limpiar la caché de Opera">
+                            <label for="opera-cache" class="form-check-label">Caché</label>
+                        </div>
+                        <div class="form-check ms-4">
+                            <input class="form-check-input" id="opera-cookies" type="checkbox" aria-label="Limpiar las cookies de Opera">
+                            <label for="opera-cookies" class="form-check-label">Cookies</label>
+                        </div>
+                        <div class="form-check ms-4">
+                            <input class="form-check-input" id="opera-extensions" type="checkbox" aria-label="Limpiar las extensiones de Opera">
+                            <label for="opera-extensions" class="form-check-label">Extensiones</label>
+                        </div>
+                        <div class="form-check ms-4">
+                            <input class="form-check-input" id="opera-passwords" type="checkbox" aria-label="Limpiar las contraseñas de Opera">
+                            <label for="opera-passwords" class="form-check-label">Contraseñas</label>
+                        </div>
+                    </div>
+                    <div class="col-12 mt-5 text-center">
+                        <button class="btn btn-primary" onclick="sendData()">Enviar</button>
+                    </div>
+                </div>
+            </div>
+            </div>
         </div>
     </main>
 

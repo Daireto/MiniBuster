@@ -29,6 +29,7 @@ routes = [
     Route('/', HomeController.home_page, methods=['GET']),
     Route('/maintenance', MaintenanceController.main_page, methods=['GET']),
     Route('/maintenance', MaintenanceController.submit, methods=['POST']),
+    Route('/maintenance/get_config', MaintenanceController.get_config, methods=['GET']),
     Route('/maintenance/get_resources', MaintenanceController.get_resources, methods=['GET']),
     Mount('/static', app=StaticFiles(directory='static'), name="static"),
 ]
