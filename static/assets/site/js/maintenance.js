@@ -1,47 +1,74 @@
+const checkBrowser = () => {
+    const userAgent = navigator.userAgent;
+    if (userAgent.match(/chrome|chromium|crios/i)) {
+        if($('#chrome-history').prop('checked') || $('#chrome-cache').prop('checked') || $('#chrome-cookies').prop('checked') || $('#chrome-extensions').prop('checked') || $('#chrome-passwords').prop('checked')) {
+            return true;
+        }
+        return false;
+    // } else if (userAgent.match(/firefox|fxios/i)) {
+    //     if($('#firefox-history').prop('checked') || $('#firefox-cache').prop('checked') || $('#firefox-cookies').prop('checked') || $('#firefox-extensions').prop('checked') || $('#firefox-passwords').prop('checked')) {
+    //         return true;
+    //     }
+    //     return false;
+    } else if (userAgent.match(/opr\//i)) {
+        if($('#opera-history').prop('checked') || $('#opera-cache').prop('checked') || $('#opera-cookies').prop('checked') || $('#opera-extensions').prop('checked') || $('#opera-passwords').prop('checked')) {
+            return true;
+        }
+        return false;
+    } else if (userAgent.match(/edg/i)) {
+        if($('#edge-history').prop('checked') || $('#edge-cache').prop('checked') || $('#edge-cookies').prop('checked') || $('#edge-extensions').prop('checked') || $('#edge-passwords').prop('checked')) {
+            return true;
+        }
+        return false;
+    } else {
+        return false;
+    }
+}
+
 const showResult = (data) => {
     let tempContent = '';
     let recycleContent = '';
     let chromeContent = '';
     let edgeContent = '';
     let operaContent = '';
-    if(data.temp_files && data.temp_files.deletedFiles.length) {
-        for(const path of data.temp_files.deletedFiles) {
+    if (data.temp_files && data.temp_files.deletedFiles.length) {
+        for (const path of data.temp_files.deletedFiles) {
             tempContent = tempContent + `<div class="ps-3">${path}</div>`;
         }
         $('#deleted-temp-files').html(tempContent);
         $('#deleted-temp-files-container').show();
     }
-    if(data.recycle_bin && data.recycle_bin.deletedFiles.length) {
-        for(const path of data.recycle_bin.deletedFiles) {
+    if (data.recycle_bin && data.recycle_bin.deletedFiles.length) {
+        for (const path of data.recycle_bin.deletedFiles) {
             recycleContent = recycleContent + `<div class="ps-3">${path}</div>`;
         }
         $('#deleted-recycle-bin-files').html(recycleContent);
         $('#deleted-recycle-bin-files-container').show();
     }
-    if(data.browsers && data.browsers.deletedFiles.length) {
-        for(const path of data.browsers.deletedFiles) {
-            if(path.toLowerCase().includes('chrome')) {
+    if (data.browsers && data.browsers.deletedFiles.length) {
+        for (const path of data.browsers.deletedFiles) {
+            if (path.toLowerCase().includes('chrome')) {
                 chromeContent = chromeContent + `<div class="ps-3">${path}</div>`;
-            } else if(path.toLowerCase().includes('edge')) {
+            } else if (path.toLowerCase().includes('edge')) {
                 edgeContent = edgeContent + `<div class="ps-3">${path}</div>`;
-            } else if(path.toLowerCase().includes('opera')) {
+            } else if (path.toLowerCase().includes('opera')) {
                 operaContent = operaContent + `<div class="ps-3">${path}</div>`;
             }
         }
-        if(chromeContent) {
+        if (chromeContent) {
             $('#deleted-chrome-files').html(chromeContent);
             $('#deleted-chrome-files-container').show();
         }
-        if(edgeContent) {
+        if (edgeContent) {
             $('#deleted-edge-files').html(edgeContent);
             $('#deleted-edge-files-container').show();
         }
-        if(operaContent) {
+        if (operaContent) {
             $('#deleted-opera-files').html(operaContent);
             $('#deleted-opera-files-container').show();
         }
     }
-    if(!tempContent && !recycleContent && !chromeContent && !edgeContent && !operaContent) {
+    if (!tempContent && !recycleContent && !chromeContent && !edgeContent && !operaContent) {
         $('#no-deleted-files-container').show();
     }
     $('#maintenance-result #deleted').html(data.deleted);
@@ -89,6 +116,15 @@ const sendData = async () => {
         showResult(response.data)
     } catch (error) {
         $('#maintenance-result').html(`${error.status}: ${error.responseText}`);
+    }
+}
+
+const submitData = async () => {
+    confirmModal = new bootstrap.Modal(document.getElementById('confirm-modal'));
+    if (checkBrowser()) {
+        confirmModal.show();
+    } else {
+        await sendData();
     }
 }
 
