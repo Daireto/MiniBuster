@@ -45,7 +45,7 @@ class MaintenanceResponse:
 class MaintenanceService(BaseService):
 
     __configuration_service = ConfigurationService()
-    
+
     __history_service = HistoryService()
 
     __browsers_options = {
@@ -221,7 +221,7 @@ class MaintenanceService(BaseService):
                 return {'system': {'temp_files': configuration[0]['clean_temp'], 'recycle_bin': configuration[0]['clean_recycle_bin']}, 'browsers': configuration[0]['clean_browsers']}
             else:
                 return env.DEFAULT_CONFIG
-        except: 
+        except:
             return env.DEFAULT_CONFIG
 
     def get_resources(self) -> dict[str, float]:
@@ -267,8 +267,9 @@ class MaintenanceService(BaseService):
                 data_bin.deletedFiles = result['deletedFiles']
                 data_bin.deleted = result['deleted']
                 data_bin.skipped = result['skipped']
-            
+
             await self.__history_service.set_history({'deleted': data_temp.deleted + data_bin.deleted + data_cookies.deleted, 'state': True, 'message_error': '', 'date': datetime.now()})
+
         except Exception as error:
             await self.__history_service.set_history({'deleted': data_temp.deleted + data_bin.deleted + data_cookies.deleted, 'state': False, 'message_error': f'{error}', 'date': datetime.now()})
 

@@ -22,26 +22,22 @@ class UserService(BaseService):
                 })
             self.__session.close()
             return content
-        except Exception as error:
+
+        except Exception:
             return 400
 
-    async def set_user(self, request) -> int:
-        try:
-            data = request
-            old_user = self.__session.query(User).filter_by(id=1).first()
-            if old_user:
-                old_user.last_session = data["last_session"]
-            else:
-                new_user = User(
-                    id=1, 
-                    name=data["name"], 
-                    last_session=data["last_session"], 
-                    os=data["os"], 
-                    device=data["device"]
-                )
-                self.__session.add(new_user)
-            self.__session.commit()
-            self.__session.close()
-            return 200
-        except Exception as error:
-            return 400
+    async def set_user(self, data):
+        old_user = self.__session.query(User).filter_by(id=1).first()
+        if old_user:
+            old_user.last_session = data["last_session"]
+        else:
+            new_user = User(
+                id=1,
+                name=data["name"],
+                last_session=data["last_session"],
+                os=data["os"],
+                device=data["device"]
+            )
+            self.__session.add(new_user)
+        self.__session.commit()
+        self.__session.close()

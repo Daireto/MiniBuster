@@ -19,17 +19,10 @@ class DatabaseService(BaseService):
         if not database_exists(url):
             create_database(url)
             BaseDatabase.metadata.create_all(engine)
-            
 
     async def connect(self):
-        try:
-            await self.__create_dtb()
-            await self.database.connect()
-        except Exception as error: 
-            print(error)
-    
+        await self.__create_dtb()
+        await self.database.connect()
+
     async def disconnect(self):
-        try:
-            await self.database.disconnect()
-        except Exception as error: 
-            print(error)
+        await self.database.disconnect()
