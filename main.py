@@ -20,7 +20,7 @@ user_service = UserService()
 async def startup():
     webbrowser.open(f'http://localhost:{env.PORT}')
     await database_service.connect()
-    await user_service.set_user({'id': 1, 'name': os.getenv('username'), 'last_session': datetime.now(), 'os': platform.system(), 'device': platform.node()})
+    await user_service.set_user({'name': os.getenv('username'), 'last_session': datetime.now(), 'os': platform.system(), 'device': platform.node()})
 
 async def shutdown():
     await database_service.disconnect()

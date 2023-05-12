@@ -11,4 +11,4 @@ class Configuration(BaseDatabase):
     active = sqlalchemy.Column(sqlalchemy.Boolean)
     clean_recycle_bin = sqlalchemy.Column(sqlalchemy.Boolean)
     clean_temp = sqlalchemy.Column(sqlalchemy.Boolean)
-    clean_browsers = sqlalchemy.Column(sqlalchemy.Boolean)
+    clean_browsers = sqlalchemy.Column(sqlalchemy.PickleType)

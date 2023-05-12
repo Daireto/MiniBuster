@@ -1,14 +1,14 @@
 from lib import BaseService
 from lib.base_database import Session
 
-from database_models.configuration import Configuration
+from models.configuration import Configuration
 
 
 class ConfigurationService(BaseService):
     
     __session = Session()
 
-    async def get_configurations(self) -> list[dict[str, str | bool | int]] | int:
+    async def get_configurations(self) -> list[dict[str, str | bool | int]]:
         try:
             query = self.__session.query(Configuration).all()
             content = []
@@ -23,7 +23,7 @@ class ConfigurationService(BaseService):
                 })
             return content
         except Exception as error:
-            return 400
+            return []
 
     async def set_configuration(self, request) -> int:
         try:
@@ -36,7 +36,7 @@ class ConfigurationService(BaseService):
                 old_configuration.clean_browsers = data["clean_browsers"]
             else:
                 new_configuration = Configuration(
-                    id=data["id"],
+                    id=1,
                     id_user=1,
                     active=data["active"],
                     clean_recycle_bin=data["clean_recycle_bin"],
