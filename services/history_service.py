@@ -1,7 +1,7 @@
 from lib import BaseService
 from lib.base_database import Session
 
-from database_models.history import History
+from models.history import History
 
 
 class HistoryService(BaseService):
@@ -34,14 +34,13 @@ class HistoryService(BaseService):
                 pass
             else:
                 new_History = History(
-                id=data["id"],
-                id_configuration=data["id_configuration"],
+                id_configuration=1,
                 deleted=data["deleted"],
                 state=data["state"],
                 message_error=data["message_error"],
                 date=data["date"]
             )
-                self.__session.add(old_history)
+                self.__session.add(new_History)
             self.__session.commit()
             self.__session.close()
             return 200

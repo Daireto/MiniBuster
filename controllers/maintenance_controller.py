@@ -34,7 +34,7 @@ class MaintenanceController(BaseController):
 
     @classmethod
     async def get_config(cls, request: Request) -> JSONResponse:
-        return JSONResponse(cls.service.get_config())
+        return JSONResponse(await cls.service.get_config())
 
     @classmethod
     async def get_resources(cls, request: Request) -> JSONResponse:
@@ -43,5 +43,5 @@ class MaintenanceController(BaseController):
     @classmethod
     async def submit(cls, request: Request) -> JSONResponse:
         data = await request.json()
-        response = cls.service.execute_maintenance(cls.__get_config(data))
+        response = await cls.service.execute_maintenance(cls.__get_config(data))
         return JSONResponse({'data': response})

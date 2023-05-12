@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 import os
 import typing
@@ -6,6 +7,8 @@ import subprocess
 from dataclasses import asdict, dataclass
 
 from lib import BaseService
+from services.configuration_service import ConfigurationService
+from services.history_service import HistoryService
 
 import env
 
@@ -40,6 +43,10 @@ class MaintenanceResponse:
 
 
 class MaintenanceService(BaseService):
+
+    __configuration_service = ConfigurationService()
+    
+    __history_service = HistoryService()
 
     __browsers_options = {
         'history': {
@@ -147,15 +154,13 @@ class MaintenanceService(BaseService):
         command =  self.__initial_command + """
 
             Clear-RecycleBin -Force -ErrorAction SilentlyContinue
-            $DiskData | ForEach-Object {
-                $path =  'C:\\$RECYCLE.BIN';
-                try{
-                    Get-ChildItem -Path $path -force | Remove-Item -Recurse -ErrorAction Stop;
-                    $deletedFiles += ($path)
-                    $deleted += 1;
-                } catch {
-                    $skipped += 1;
-                }
+            $path =  'C:\\$RECYCLE.BIN';
+            try{
+                Get-ChildItem -Path $path -force | Remove-Item -Recurse -ErrorAction Stop;
+                $deletedFiles += ($path)
+                $deleted += 1;
+            } catch {
+                $skipped += 1;
             }
 
             $maintenance = @{};
@@ -209,8 +214,15 @@ class MaintenanceService(BaseService):
         except Exception as error:
             return error
 
-    def get_config(self) -> dict[str, typing.Any]:
-        return env.DEFAULT_CONFIG
+    async def get_config(self) -> dict[str, typing.Any]:
+        try:
+            configuration = await self.__configuration_service.get_configurations()
+            if len(configuration) > 0:
+                return {'system': {'temp_files': configuration[0]['clean_temp'], 'recycle_bin': configuration[0]['clean_recycle_bin']}, 'browsers': configuration[0]['clean_browsers']}
+            else:
+                return env.DEFAULT_CONFIG
+        except: 
+            return env.DEFAULT_CONFIG
 
     def get_resources(self) -> dict[str, float]:
         return {
@@ -219,7 +231,8 @@ class MaintenanceService(BaseService):
             'disk': psutil.disk_usage('C:\\').percent
         }
 
-    def execute_maintenance(self, config: Config) -> dict[str, typing.Any]:
+    async def execute_maintenance(self, config: Config) -> dict[str, typing.Any]:
+        await self.__configuration_service.set_configuration({'active': True, 'clean_recycle_bin': config.system['recycle_bin'], 'clean_temp': config.system['temp_files'], 'clean_browsers': config.browsers.__dict__})
         data_temp = OperationResult(deletedFiles=[], deleted=0, skipped=0)
         data_bin = OperationResult(deletedFiles=[], deleted=0, skipped=0)
         data_cookies = OperationResult(deletedFiles=[], deleted=0, skipped=0)
@@ -227,32 +240,37 @@ class MaintenanceService(BaseService):
         files_opera = ''
         files_edge = ''
 
-        for key, value in config.browsers.chrome.items():
-            if value:
-                files_chrome += self.__browsers_options[key]['chrome'] + ', '
-        for key, value in config.browsers.opera.items():
-            if value:
-                files_opera += self.__browsers_options[key]['opera'] + ', '
-        for key, value in config.browsers.edge.items():
-            if value:
-                files_edge += self.__browsers_options[key]['edge'] + ', '
+        try:
+            for key, value in config.browsers.chrome.items():
+                if value:
+                    files_chrome += self.__browsers_options[key]['chrome'] + ', '
+            for key, value in config.browsers.opera.items():
+                if value:
+                    files_opera += self.__browsers_options[key]['opera'] + ', '
+            for key, value in config.browsers.edge.items():
+                if value:
+                    files_edge += self.__browsers_options[key]['edge'] + ', '
 
-        result = self.__clean_browsers(files_chrome=files_chrome[:-2], files_edge=files_edge[:-2], files_opera=files_opera[:-2])
-        data_cookies.deletedFiles = result['deletedFiles']
-        data_cookies.deleted = result['deleted']
-        data_cookies.skipped = result['skipped']
+            result = self.__clean_browsers(files_chrome=files_chrome[:-2], files_edge=files_edge[:-2], files_opera=files_opera[:-2])
+            data_cookies.deletedFiles = result['deletedFiles']
+            data_cookies.deleted = result['deleted']
+            data_cookies.skipped = result['skipped']
 
-        if config.system['temp_files']:
-            result = self.__clear_temp()
-            data_temp.deletedFiles = result['deletedFiles']
-            data_temp.deleted = result['deleted']
-            data_temp.skipped = result['skipped']
+            if config.system['temp_files']:
+                result = self.__clear_temp()
+                data_temp.deletedFiles = result['deletedFiles']
+                data_temp.deleted = result['deleted']
+                data_temp.skipped = result['skipped']
 
-        if config.system['recycle_bin']:
-            result = self.__clear_recycle_bin()
-            data_bin.deletedFiles = result['deletedFiles']
-            data_bin.deleted = result['deleted']
-            data_bin.skipped = result['skipped']
+            if config.system['recycle_bin']:
+                result = self.__clear_recycle_bin()
+                data_bin.deletedFiles = result['deletedFiles']
+                data_bin.deleted = result['deleted']
+                data_bin.skipped = result['skipped']
+            
+            await self.__history_service.set_history({'deleted': data_temp.deleted + data_bin.deleted + data_cookies.deleted, 'state': True, 'message_error': '', 'date': datetime.now()})
+        except Exception as error:
+            await self.__history_service.set_history({'deleted': data_temp.deleted + data_bin.deleted + data_cookies.deleted, 'state': False, 'message_error': f'{error}', 'date': datetime.now()})
 
         data = MaintenanceResponse(
             temp_files=OperationResult(
