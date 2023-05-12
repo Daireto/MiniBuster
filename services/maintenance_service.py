@@ -149,12 +149,14 @@ class MaintenanceService(BaseService):
             Clear-RecycleBin -Force -ErrorAction SilentlyContinue
             $DiskData | ForEach-Object {
                 $path =  'C:\\$RECYCLE.BIN';
-                try{
-                    Get-ChildItem -Path $path -force | Remove-Item -Recurse -ErrorAction Stop;
-                    $deletedFiles += ($path)
-                    $deleted += 1;
-                } catch {
-                    $skipped += 1;
+                Get-ChildItem -Path $path -force -Recurse  -ErrorAction SilentlyContinue | ForEach-Object {
+                    try{
+                        Remove-Item -Path $_.FullName -Force -Recurse -ErrorAction Stop ;
+                        $deletedFiles += ($_.FullName)
+                        $deleted += 1;
+                    } catch {
+                        $skipped += 1;
+                    }
                 }
             }
 
