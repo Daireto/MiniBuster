@@ -5,7 +5,7 @@ from models.history import History
 
 
 class HistoryService(BaseService):
-    
+
     __session = Session()
 
     async def get_history(self) -> list[dict[str, str | bool | int]] | int:
@@ -23,26 +23,22 @@ class HistoryService(BaseService):
                 }
             )
             return content
-        except Exception as error:
+
+        except Exception:
             return 400
 
-    async def set_history(self, request) -> int:
-        try:
-            data = request
-            old_history = self.__session.query(History).filter_by(id=1).first()
-            if old_history:
-                pass
-            else:
-                new_History = History(
-                id_configuration=1,
-                deleted=data["deleted"],
-                state=data["state"],
-                message_error=data["message_error"],
-                date=data["date"]
-            )
-                self.__session.add(new_History)
-            self.__session.commit()
-            self.__session.close()
-            return 200
-        except Exception as error:
-            return 200
+    async def set_history(self, data):
+        old_history = self.__session.query(History).filter_by(id=1).first()
+        if old_history:
+            pass
+        else:
+            new_History = History(
+            id_configuration=1,
+            deleted=data["deleted"],
+            state=data["state"],
+            message_error=data["message_error"],
+            date=data["date"]
+        )
+            self.__session.add(new_History)
+        self.__session.commit()
+        self.__session.close()

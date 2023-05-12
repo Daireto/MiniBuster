@@ -5,7 +5,7 @@ from models.configuration import Configuration
 
 
 class ConfigurationService(BaseService):
-    
+
     __session = Session()
 
     async def get_configurations(self) -> list[dict[str, str | bool | int]]:
@@ -22,30 +22,26 @@ class ConfigurationService(BaseService):
                     "clean_browsers": result.clean_browsers
                 })
             return content
-        except Exception as error:
+
+        except:
             return []
 
-    async def set_configuration(self, request) -> int:
-        try:
-            data = request
-            old_configuration = self.__session.query(Configuration).filter_by(id=1).first()
-            if old_configuration:
-                old_configuration.active = data["active"]
-                old_configuration.clean_recycle_bin = data["clean_recycle_bin"]
-                old_configuration.clean_temp = data["clean_temp"]
-                old_configuration.clean_browsers = data["clean_browsers"]
-            else:
-                new_configuration = Configuration(
-                    id=1,
-                    id_user=1,
-                    active=data["active"],
-                    clean_recycle_bin=data["clean_recycle_bin"],
-                    clean_temp=data["clean_temp"],
-                    clean_browsers=data["clean_browsers"]
-                )
-                self.__session.add(new_configuration)
-            self.__session.commit()
-            self.__session.close()
-            return 200
-        except Exception as error:
-            return 400
+    async def set_configuration(self, data):
+        old_configuration = self.__session.query(Configuration).filter_by(id=1).first()
+        if old_configuration:
+            old_configuration.active = data["active"]
+            old_configuration.clean_recycle_bin = data["clean_recycle_bin"]
+            old_configuration.clean_temp = data["clean_temp"]
+            old_configuration.clean_browsers = data["clean_browsers"]
+        else:
+            new_configuration = Configuration(
+                id=1,
+                id_user=1,
+                active=data["active"],
+                clean_recycle_bin=data["clean_recycle_bin"],
+                clean_temp=data["clean_temp"],
+                clean_browsers=data["clean_browsers"]
+            )
+            self.__session.add(new_configuration)
+        self.__session.commit()
+        self.__session.close()
