@@ -10,7 +10,8 @@
 
     <main>
         <div class="container-fluid full-height toggle-bg">
-            <div class="toggle-text px-5 mx-5">
+            {% include "layouts/spinner.html" %}
+            <div id="delete-config-form" class="toggle-text px-5 mx-5">
                 <h5 class="py-4">Seleccione los elementos que desea eliminar:</h5>
                 <div class="row">
                     <div class="col">
@@ -94,10 +95,18 @@
                         </div>
                     </div>
                     <div class="col-12 mt-5 text-center">
-                        <button class="btn btn-primary" onclick="sendData()">Enviar</button>
+                        <button class="btn btn-primary" onclick="sendData()">Realizar limpieza</button>
                     </div>
                 </div>
             </div>
+            <div id="maintenance-result" class="toggle-text px-5 mx-5">
+                <div class="row">
+                    <div class="col-6"></div>
+                    <div class="col-6 text-center pt-5">
+                        <h5>Cantidad de archivos eliminados</h5>
+                        <p id="deleted"></p>
+                    </div>
+                </div>
             </div>
         </div>
     </main>

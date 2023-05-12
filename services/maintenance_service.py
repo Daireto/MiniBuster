@@ -1,11 +1,42 @@
+import json
 import os
 import typing
 import psutil
 import subprocess
+from dataclasses import asdict, dataclass
 
 from lib import BaseService
 
 import env
+
+
+@dataclass
+class BrowsersConfig:
+    chrome: dict[str, bool]
+    opera: dict[str, bool]
+    edge: dict[str, bool]
+
+
+@dataclass
+class Config:
+    system: dict[str, bool]
+    browsers: BrowsersConfig
+
+
+@dataclass
+class OperationResult:
+    deletedFiles: list[str]
+    deleted: int
+    skipped: int
+
+
+@dataclass
+class MaintenanceResponse:
+    temp_files: OperationResult
+    recycle_bin: OperationResult
+    browsers: OperationResult
+    deleted: int
+    skipped: int
 
 
 class MaintenanceService(BaseService):
@@ -45,16 +76,20 @@ class MaintenanceService(BaseService):
         $disco = 'C';
         $tempFolders = @()
 
-        $tempFolders += ('C:\\Users\\' + $username + '\\AppData\\Local\\Temp')
+        $tempFolders += ('C:\\Users\\$username\\AppData\\Local\\Temp')
         $tempFolders += ('C:\\temp')
         $tempFolders += ('C:\\Windows\\Temp')
 
+        $skipped = 0;
         $deleted = 0;
         $deletedFiles = @()
     """.replace('$username', str(__username))
 
-    def __delete_profiles(self, path_browser: str, items_delete: str):
-        profiles = ""
+    def __delete_profiles(self, path_browser: str, items_delete: str) -> str:
+        profiles = ''
+        if not os.path.exists(path_browser):
+            return profiles
+
         for path in os.listdir(path_browser):
             if os.path.exists(fr'{path_browser}\{path}\Preferences'):
                 profiles += r"""
@@ -63,11 +98,16 @@ class MaintenanceService(BaseService):
                 $Folder = "browser\Profile"
                 $Items | % {
                     if (Test-Path "$Folder\$_") {
-                        Remove-Item "$Folder\$_" -force -recurse  -ErrorAction SilentlyContinue
-                        $deletedFiles += ("$Folder\$_")
-                        $deleted += 1
+                        try{
+                            Remove-Item "$Folder\$_" -force -recurse  -ErrorAction SilentlyContinue
+                            $deletedFiles += ("$Folder\$_")
+                            $deleted += 1;
+                        } catch {
+                            $skipped += 1;
+                        }
                     }
                 }""".replace('$username', os.getlogin()).replace('Profile', path).replace('browser', path_browser).replace('items_delete', items_delete)
+
         return profiles
 
     def __clear_temp(self) -> typing.Any:
@@ -77,29 +117,64 @@ class MaintenanceService(BaseService):
                 if(Test-Path $_){
                     Get-ChildItem -Path  $_  -Recurse  -ErrorAction SilentlyContinue | ForEach-Object {
                         try{
-                            Remove-Item -Path $_.FullName -Force -Recurse -ErrorAction SilentlyContinue ;
+                            Remove-Item -Path $_.FullName -Force -Recurse -ErrorAction Stop ;
                             $deletedFiles += ($_.FullName)
                             $deleted += 1;
-                        }
-                        catch [UnauthorizedAccessException]{
-                            $skipped += 1 ;
+                        } catch {
+                            $skipped += 1;
                         }
                     }
                 }
             }
+
+            $maintenance = @{};
+            $maintenance.deleted = $deleted;
+            $maintenance.skipped = $skipped;
+            $maintenance.deletedFiles = $deletedFiles;
+            Write-Host ($maintenance | ConvertTo-Json);
         """
+
         try:
             p = subprocess.Popen(["powershell", command], stdout=subprocess.PIPE)
             output = p.communicate()
             data = output[0].decode('utf-8', 'ignore')
+            return json.loads(data)
 
-            print(data)
-            return data
         except Exception as error:
-            print(error)
             return error
 
-    def __delete_cookies(self, files_edge, files_opera, files_chrome) -> typing.Any:
+    def __clear_recycle_bin(self) -> typing.Any:
+        command =  self.__initial_command + """
+
+            Clear-RecycleBin -Force -ErrorAction SilentlyContinue
+            $DiskData | ForEach-Object {
+                $path =  'C:\\$RECYCLE.BIN';
+                try{
+                    Get-ChildItem -Path $path -force | Remove-Item -Recurse -ErrorAction Stop;
+                    $deletedFiles += ($path)
+                    $deleted += 1;
+                } catch {
+                    $skipped += 1;
+                }
+            }
+
+            $maintenance = @{};
+            $maintenance.deleted = $deleted;
+            $maintenance.skipped = $skipped;
+            $maintenance.deletedFiles = $deletedFiles;
+            Write-Host ($maintenance | ConvertTo-Json);
+        """
+
+        try:
+            p = subprocess.Popen(["powershell", command], stdout=subprocess.PIPE)
+            output = p.communicate()
+            data = output[0].decode('utf-8', 'ignore')
+            return json.loads(data)
+
+        except Exception as error:
+            return error
+
+    def __clean_browsers(self, files_edge: str, files_opera: str, files_chrome: str) -> typing.Any:
         path_edge = fr'C:\Users\{os.getlogin()}\AppData\Local\Microsoft\Edge\User Data'
         path_opera = fr'C:\Users\{os.getlogin()}\AppData\Local\Opera Software\Opera Stable'
         path_chrome = fr'C:\Users\{os.getlogin()}\AppData\Local\Google\Chrome\User Data'
@@ -109,47 +184,28 @@ class MaintenanceService(BaseService):
         Stop-Process -Name msedge -ErrorAction SilentlyContinue -Force;
         Stop-Process -Name opera -ErrorAction SilentlyContinue -Force;
         Stop-Process -Name chrome -ErrorAction SilentlyContinue -Force;
+
         """ + self.__delete_profiles(path_chrome, files_chrome) + """
         """ + self.__delete_profiles(path_edge, files_edge) + """
         """ + self.__delete_profiles(path_opera, files_opera) + """
+
         $maintenance = @{};
         $maintenance.deleted = $deleted;
+        $maintenance.skipped = $skipped;
         $maintenance.deletedFiles = $deletedFiles;
         Write-Host ($maintenance | ConvertTo-Json);
         """.replace('$username', os.getlogin())
+
         try:
             p = subprocess.Popen(["powershell", command], stdout=subprocess.PIPE)
             output = p.communicate()
             data = output[0].decode('utf-8', 'ignore')
+            return json.loads(data)
 
-            print(data)
-            return data
         except Exception as error:
-            print(error)
             return error
 
-    def __clear_recycle_bin(self) -> typing.Any:
-        command =  self.__initial_command + """
-
-            Clear-RecycleBin -Force -ErrorAction SilentlyContinue
-            $DiskData | ForEach-Object {
-                $path =  'C:\\$RECYCLE.BIN';
-                Get-ChildItem -Path $path -force | Remove-Item -Recurse -ErrorAction SilentlyContinue;
-                $deletedFiles += ($path)
-        }
-        """
-        try:
-            p = subprocess.Popen(["powershell", command], stdout=subprocess.PIPE)
-            output = p.communicate()
-            data = output[0].decode('utf-8', 'ignore')
-
-            print(data)
-            return data
-        except Exception as error:
-            print(error)
-            return error
-
-    def get_config(self) -> dict[str, object]:
+    def get_config(self) -> dict[str, typing.Any]:
         return env.DEFAULT_CONFIG
 
     def get_resources(self) -> dict[str, float]:
@@ -159,29 +215,55 @@ class MaintenanceService(BaseService):
             'disk': psutil.disk_usage('C:\\').percent
         }
 
-    def execute_maintenance(self, config: dict[str, dict[str, bool]]):
-        data = {}
-        data_bin = {}
-        data_temp = {}
-        data_cookies = {}
+    def execute_maintenance(self, config: Config) -> dict[str, typing.Any]:
+        data_temp = OperationResult(deletedFiles=[], deleted=0, skipped=0)
+        data_bin = OperationResult(deletedFiles=[], deleted=0, skipped=0)
+        data_cookies = OperationResult(deletedFiles=[], deleted=0, skipped=0)
         files_chrome = ''
         files_opera = ''
         files_edge = ''
-        if config['system']['temp_files']:
-            data_temp = self.__clear_temp()
-        if config['system']['recycle_bin']:
-            data_bin = self.__clear_recycle_bin()
-        if config['browsers']:
-            for key, value in config['browsers']['chrome'].__dict__.items():
-                if value:
-                    files_chrome += self.__browsers_options[key]['chrome'] + ', '
-            for key, value in config['browsers']['opera'].__dict__.items():
-                if value:
-                    files_opera += self.__browsers_options[key]['opera'] + ', '
-            for key, value in config['browsers']['edge'].__dict__.items():
-                if value:
-                    files_edge += self.__browsers_options[key]['edge'] + ', '
-            data_cookies = self.__delete_cookies(files_chrome=files_chrome[:-2], files_edge=files_edge[:-2], files_opera=files_opera[:-2])
-        data['deletedFiles'] = data_temp['deletedFiles'] + data_bin['deletedFiles'] + data_cookies['deletedFiles']
-        data['deleted'] = data_temp['deleted'] + data_bin['deleted'] + data_cookies['deleted']
-        return data
+
+        for key, value in config.browsers.chrome.items():
+            if value:
+                files_chrome += self.__browsers_options[key]['chrome'] + ', '
+        for key, value in config.browsers.opera.items():
+            if value:
+                files_opera += self.__browsers_options[key]['opera'] + ', '
+        for key, value in config.browsers.edge.items():
+            if value:
+                files_edge += self.__browsers_options[key]['edge'] + ', '
+
+        result = self.__clean_browsers(files_chrome=files_chrome[:-2], files_edge=files_edge[:-2], files_opera=files_opera[:-2])
+        data_cookies.deletedFiles = result['deletedFiles']
+        data_cookies.deleted = result['deleted']
+        data_cookies.skipped = result['skipped']
+
+        if config.system['temp_files']:
+            result = self.__clear_temp()
+            data_temp.deletedFiles = result['deletedFiles']
+            data_temp.deleted = result['deleted']
+            data_temp.skipped = result['skipped']
+
+        if config.system['recycle_bin']:
+            result = self.__clear_recycle_bin()
+            data_bin.deletedFiles = result['deletedFiles']
+            data_bin.deleted = result['deleted']
+            data_bin.skipped = result['skipped']
+
+        data = MaintenanceResponse(
+            temp_files=OperationResult(
+                deletedFiles=data_temp.deletedFiles,
+                deleted=data_temp.deleted,
+                skipped=data_temp.skipped),
+            recycle_bin=OperationResult(
+                deletedFiles=data_bin.deletedFiles,
+                deleted=data_bin.deleted,
+                skipped=data_bin.skipped),
+            browsers=OperationResult(
+                deletedFiles=data_cookies.deletedFiles,
+                deleted=data_cookies.deleted,
+                skipped=data_cookies.skipped),
+            deleted=data_temp.deleted + data_bin.deleted + data_cookies.deleted,
+            skipped=data_temp.skipped + data_bin.skipped + data_cookies.skipped)
+
+        return asdict(data)

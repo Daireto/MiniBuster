@@ -35,6 +35,20 @@ const navigate = (url) => {
     location.assign(url);
 }
 
+const showSpinner = (message) => {
+    if(message) {
+        $('#spinner #spinner-message').addClass('pt-3')
+        $('#spinner #spinner-message').html(message)
+    } else {
+        $('#spinner #spinner-message').removeClass('pt-3')
+    }
+    $('#spinner').show();
+}
+
+const hideSpinner = () => {
+    $('#spinner').hide();
+}
+
 $(document).ready(() => {
     window.darkMode = toggleColorTheme();
     $("html").css("visibility", "visible");
