@@ -3,6 +3,7 @@
 
 <head>
     {% include "layouts/header.html" %}
+    <link rel="stylesheet" href="/static/assets/site/css/maintenance.css">
 </head>
 
 <body>
@@ -99,12 +100,43 @@
                     </div>
                 </div>
             </div>
-            <div id="maintenance-result" class="toggle-text px-5 mx-5">
+            <div id="maintenance-result" class="toggle-text px-5">
                 <div class="row">
-                    <div class="col-6"></div>
-                    <div class="col-6 text-center pt-5">
-                        <h5>Cantidad de archivos eliminados</h5>
+                    <div class="col-8 pt-5">
+                        <h5 class="text-center mb-3">Lista de archivos eliminados</h5>
+                        <div id="deleted-files" class="overflow-auto">
+                            <div id="deleted-temp-files-container" class="mb-3">
+                                <h6>Temporales</h6>
+                                <div id="deleted-temp-files"></div>
+                            </div>
+                            <div id="deleted-recycle-bin-files-container" class="mb-3">
+                                <h6>Papelera</h6>
+                                <div id="deleted-recycle-bin-files"></div>
+                            </div>
+                            <div id="deleted-chrome-files-container" class="mb-3">
+                                <h6>Chrome</h6>
+                                <div id="deleted-chrome-files"></div>
+                            </div>
+                            <div id="deleted-edge-files-container" class="mb-3">
+                                <h6>Edge</h6>
+                                <div id="deleted-edge-files"></div>
+                            </div>
+                            <div id="deleted-opera-files-container" class="mb-3">
+                                <h6>Opera</h6>
+                                <div id="deleted-opera-files"></div>
+                            </div>
+                            <div id="no-deleted-files-container" class="mb-3">
+                                <h6 class="text-center">No se eliminó ningún archivo</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4 text-center pt-5">
+                        <h5 class="mb-3">Total</h5>
+                        <h6>Cantidad de archivos eliminados</h6>
                         <p id="deleted"></p>
+                        <h6>Cantidad de archivos ignorados <i class="fab fa-circle-info"></i></h6>
+                        <p id="skipped"></p>
+                        <button class="btn btn-primary" onclick="navigate('/')">Regresar</button>
                     </div>
                 </div>
             </div>

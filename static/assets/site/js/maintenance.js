@@ -1,3 +1,55 @@
+const showResult = (data) => {
+    let tempContent = '';
+    let recycleContent = '';
+    let chromeContent = '';
+    let edgeContent = '';
+    let operaContent = '';
+    if(data.temp_files && data.temp_files.deletedFiles.length) {
+        for(const path of data.temp_files.deletedFiles) {
+            tempContent = tempContent + `<div class="ps-3">${path}</div>`;
+        }
+        $('#deleted-temp-files').html(tempContent);
+        $('#deleted-temp-files-container').show();
+    }
+    if(data.recycle_bin && data.recycle_bin.deletedFiles.length) {
+        for(const path of data.recycle_bin.deletedFiles) {
+            recycleContent = recycleContent + `<div class="ps-3">${path}</div>`;
+        }
+        $('#deleted-recycle-bin-files').html(recycleContent);
+        $('#deleted-recycle-bin-files-container').show();
+    }
+    if(data.browsers && data.browsers.deletedFiles.length) {
+        for(const path of data.browsers.deletedFiles) {
+            if(path.toLowerCase().includes('chrome')) {
+                chromeContent = chromeContent + `<div class="ps-3">${path}</div>`;
+            } else if(path.toLowerCase().includes('edge')) {
+                edgeContent = edgeContent + `<div class="ps-3">${path}</div>`;
+            } else if(path.toLowerCase().includes('opera')) {
+                operaContent = operaContent + `<div class="ps-3">${path}</div>`;
+            }
+        }
+        if(chromeContent) {
+            $('#deleted-chrome-files').html(chromeContent);
+            $('#deleted-chrome-files-container').show();
+        }
+        if(edgeContent) {
+            $('#deleted-edge-files').html(edgeContent);
+            $('#deleted-edge-files-container').show();
+        }
+        if(operaContent) {
+            $('#deleted-opera-files').html(operaContent);
+            $('#deleted-opera-files-container').show();
+        }
+    }
+    if(!tempContent && !recycleContent && !chromeContent && !edgeContent && !operaContent) {
+        $('#no-deleted-files-container').show();
+    }
+    $('#maintenance-result #deleted').html(data.deleted);
+    $('#maintenance-result #skipped').html(data.skipped);
+    hideSpinner();
+    $('#maintenance-result').show();
+}
+
 const sendData = async () => {
     try {
         $('#delete-config-form').hide();
@@ -34,9 +86,7 @@ const sendData = async () => {
         }
 
         const response = await post('/maintenance', config);
-        $('#maintenance-result #deleted').html(response.data.deleted);
-        hideSpinner();
-        $('#maintenance-result').show();
+        showResult(response.data)
     } catch (error) {
         $('#maintenance-result').html(`${error.status}: ${error.responseText}`);
     }
@@ -71,4 +121,10 @@ $(document).ready(async () => {
 
 $('#delete-config-form').hide();
 $('#maintenance-result').hide();
+$('#deleted-temp-files-container').hide();
+$('#deleted-recycle-bin-files-container').hide();
+$('#deleted-chrome-files-container').hide();
+$('#deleted-edge-files-container').hide();
+$('#deleted-opera-files-container').hide();
+$('#no-deleted-files-container').hide();
 showSpinner();
