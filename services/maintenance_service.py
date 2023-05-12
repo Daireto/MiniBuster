@@ -179,11 +179,15 @@ class MaintenanceService(BaseService):
         path_opera = fr'C:\Users\{os.getlogin()}\AppData\Local\Opera Software\Opera Stable'
         path_chrome = fr'C:\Users\{os.getlogin()}\AppData\Local\Google\Chrome\User Data'
 
-        command =  self.__initial_command + """
+        stop_edge = 'Stop-Process -Name msedge -ErrorAction SilentlyContinue -Force;' if files_edge else ''
+        stop_opera = 'Stop-Process -Name opera -ErrorAction SilentlyContinue -Force;' if files_opera else ''
+        stop_chrome = 'Stop-Process -Name chrome -ErrorAction SilentlyContinue -Force;' if files_chrome else ''
 
-        Stop-Process -Name msedge -ErrorAction SilentlyContinue -Force;
-        Stop-Process -Name opera -ErrorAction SilentlyContinue -Force;
-        Stop-Process -Name chrome -ErrorAction SilentlyContinue -Force;
+        command =  self.__initial_command + f"""
+
+        {stop_edge}
+        {stop_opera}
+        {stop_chrome}
 
         """ + self.__delete_profiles(path_chrome, files_chrome) + """
         """ + self.__delete_profiles(path_edge, files_edge) + """
