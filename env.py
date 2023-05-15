@@ -3,7 +3,7 @@ NAME = 'MiniBuster'
 DEBUG = True
 
 # Server
-APP = 'main:app'
+APP = 'app:app'
 HOST = '0.0.0.0'
 PORT = 8010
 LOG_LEVEL = 'info'
