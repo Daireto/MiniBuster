@@ -2,8 +2,8 @@ import platform
 import webbrowser
 import env
 import os
-
 from datetime import datetime
+
 from starlette.applications import Starlette
 from starlette.routing import Route, Mount
 from starlette.staticfiles import StaticFiles
@@ -14,16 +14,20 @@ from controllers import HomeController, MaintenanceController
 from services import DatabaseService, UserService
 from lib.system_tray_icon import SystemTrayIcon
 
+
 database_service = DatabaseService()
 user_service = UserService()
+
 
 async def startup():
     webbrowser.open(f'http://localhost:{env.PORT}')
     await database_service.connect()
     await user_service.set_user({'name': os.getenv('username'), 'last_session': datetime.now(), 'os': platform.system(), 'device': platform.node()})
 
+
 async def shutdown():
     await database_service.disconnect()
+
 
 routes = [
     Route('/', HomeController.home_page, methods=['GET']),
