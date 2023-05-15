@@ -1,7 +1,7 @@
 from multiprocessing import Process
 import psutil
-
 import uvicorn
+
 from starlette.applications import Starlette
 
 import env
