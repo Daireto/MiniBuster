@@ -17,6 +17,7 @@ from lib.system_tray_icon import SystemTrayIcon
 
 database_service = DatabaseService()
 user_service = UserService()
+static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'static'))
 
 
 async def startup():
@@ -35,7 +36,7 @@ routes = [
     Route('/maintenance', MaintenanceController.submit, methods=['POST']),
     Route('/maintenance/get_config', MaintenanceController.get_config, methods=['GET']),
     Route('/maintenance/get_resources', MaintenanceController.get_resources, methods=['GET']),
-    Mount('/static', app=StaticFiles(directory='static'), name="static"),
+    Mount('/static', app=StaticFiles(directory=static_dir), name='static'),
 ]
 
 
