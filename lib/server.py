@@ -1,6 +1,8 @@
 from multiprocessing import Process
 import psutil
 import uvicorn
+import io
+import sys
 
 from starlette.applications import Starlette
 
@@ -14,17 +16,24 @@ class Server:
     pid: int | None
 
     @staticmethod
+    def init():
+        if env.DEBUG == False:
+            stream = io.StringIO()
+            sys.stdout = stream
+            sys.stderr = stream
+
+        uvicorn.run(
+            app=env.APP,
+            host=env.HOST,
+            port=env.PORT,
+            log_level=env.LOG_LEVEL if env.DEBUG else None,
+            reload=env.RELOAD if env.DEBUG else False
+        )
+
+    @staticmethod
     def start(app: Starlette):
         Server.app = app
-        Server.proc = Process(target=uvicorn.run,
-            args=(),
-            kwargs={
-                'app': env.APP,
-                'host': env.HOST,
-                'port': env.PORT,
-                'log_level': env.LOG_LEVEL,
-                'reload': env.RELOAD},
-            daemon=False)
+        Server.proc = Process(target=Server.init, daemon=False)
         Server.proc.start()
 
     @staticmethod
