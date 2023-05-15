@@ -1,3 +1,5 @@
+import os
+
 # Application
 NAME = 'MiniBuster'
 DEBUG = True
@@ -9,7 +11,13 @@ PORT = 8010
 LOG_LEVEL = 'info'
 RELOAD = True
 
-#database
+# Templates
+TEMPLATES_URL = os.path.abspath(os.path.join(os.path.dirname(__file__), 'templates'))
+
+# Static
+STATIC_URL = os.path.abspath(os.path.join(os.path.dirname(__file__), 'static'))
+
+# Database
 DATABASE_URL = 'sqlite:///'
 
 # Maintenance

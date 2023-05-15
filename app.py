@@ -1,6 +1,5 @@
 import platform
 import webbrowser
-import env
 import os
 from datetime import datetime
 
@@ -10,12 +9,13 @@ from starlette.staticfiles import StaticFiles
 from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
 
+import env
 from controllers import HomeController, MaintenanceController
 from services import DatabaseService, UserService
 
+
 database_service = DatabaseService()
 user_service = UserService()
-static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'static'))
 
 
 async def startup():
@@ -34,7 +34,7 @@ routes = [
     Route('/maintenance', MaintenanceController.submit, methods=['POST']),
     Route('/maintenance/get_config', MaintenanceController.get_config, methods=['GET']),
     Route('/maintenance/get_resources', MaintenanceController.get_resources, methods=['GET']),
-    Mount('/static', app=StaticFiles(directory=static_dir), name='static'),
+    Mount('/static', app=StaticFiles(directory=env.STATIC_URL), name='static'),
 ]
 
 
