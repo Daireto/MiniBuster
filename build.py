@@ -29,7 +29,7 @@ def main():
 
     print('Creando el comando de compilación...')
     pyinstaller_path = os.path.join(venv_dir, 'Scripts', 'pyinstaller.exe')
-    command = f'{pyinstaller_path} --noconfirm --onefile --icon=minibuster.ico --noconsole --add-data={run_dir}lib;. --add-data={run_dir}static;. --add-data={run_dir}templates;.'
+    command = f'{pyinstaller_path} --noconfirm --onefile --icon=minibuster.ico --console --add-data=lib;lib --add-data=static;static --add-data=templates;templates'
     for module in module_list:
         command = command + f' --hidden-import={module} --collect-submodules={module}'
     command = command + f' {run_dir}main.py'
