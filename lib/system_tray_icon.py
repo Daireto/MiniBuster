@@ -6,13 +6,15 @@ from starlette.applications import Starlette
 
 import env
 from .server import Server
+from .image import mode, size, pixels
 
 
 class SystemTrayIcon:
 
     @staticmethod
     def start(app: Starlette):
-        image = Image.open('./static/public/images/system-tray-logo.png')
+        image = Image.new(mode=mode, size=size)
+        image.putdata(pixels)
         icon = pystray.Icon('MiniBuster', image, menu=pystray.Menu(
             pystray.MenuItem('Abrir', SystemTrayIcon.on_open, default=True),
             pystray.MenuItem('Salir', SystemTrayIcon.on_exit),

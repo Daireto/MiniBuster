@@ -80,3 +80,9 @@ const createGauge = (source, value = 0) => {
     const ctx = $(`#${source}-gauge`)[0].getContext('2d');
     window[`${source}Gauge`] = new Chart(ctx, gaugeConfig);
 }
+
+const updateGauge = (source, value = 0) => {
+    const chart = window[`${source}Gauge`];
+    chart.data.datasets[0].value = value;
+    chart.update();
+}

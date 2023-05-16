@@ -1,22 +1,29 @@
+import os
+
 # Application
 NAME = 'MiniBuster'
 DEBUG = True
 
 # Server
-APP = 'main:app'
+APP = 'app:app'
 HOST = '0.0.0.0'
 PORT = 8010
 LOG_LEVEL = 'info'
 RELOAD = True
 
-#database
-DATABASE_URL = 'sqlite:///C:\\sqlitedbs\\minibuster.db'
+# Templates
+TEMPLATES_URL = os.path.abspath(os.path.join(os.path.dirname(__file__), 'templates'))
+
+# Static
+STATIC_URL = os.path.abspath(os.path.join(os.path.dirname(__file__), 'static'))
+
+# Database
+DATABASE_URL = 'sqlite:///'
 
 # Maintenance
 DEFAULT_CONFIG = {
     "system": {
         "temp_files": True,
-        "cache": True,
         "recycle_bin": False
     },
     "browsers": {
