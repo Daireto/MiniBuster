@@ -118,6 +118,8 @@ class MaintenanceService(BaseService):
         return profiles
 
     def __clear_temp(self) -> typing.Any:
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
         command = self.__initial_command + """
 
             $tempFolders | ForEach-Object {
@@ -142,7 +144,7 @@ class MaintenanceService(BaseService):
         """
 
         try:
-            p = subprocess.Popen(["powershell", command], stdout=subprocess.PIPE)
+            p = subprocess.Popen(["powershell", command], stdout=subprocess.PIPE, startupinfo=startupinfo)
             output = p.communicate()
             data = output[0].decode('utf-8', 'ignore')
             return json.loads(data)
@@ -151,6 +153,8 @@ class MaintenanceService(BaseService):
             return error
 
     def __clear_recycle_bin(self) -> typing.Any:
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
         command =  self.__initial_command + """
 
             Clear-RecycleBin -Force -ErrorAction SilentlyContinue
@@ -171,7 +175,7 @@ class MaintenanceService(BaseService):
         """
 
         try:
-            p = subprocess.Popen(["powershell", command], stdout=subprocess.PIPE)
+            p = subprocess.Popen(["powershell", command], stdout=subprocess.PIPE, startupinfo=startupinfo)
             output = p.communicate()
             data = output[0].decode('utf-8', 'ignore')
             return json.loads(data)
@@ -187,6 +191,9 @@ class MaintenanceService(BaseService):
         stop_edge = 'Stop-Process -Name msedge -ErrorAction SilentlyContinue -Force;' if files_edge else ''
         stop_opera = 'Stop-Process -Name opera -ErrorAction SilentlyContinue -Force;' if files_opera else ''
         stop_chrome = 'Stop-Process -Name chrome -ErrorAction SilentlyContinue -Force;' if files_chrome else ''
+
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
 
         command =  self.__initial_command + f"""
 
@@ -206,7 +213,7 @@ class MaintenanceService(BaseService):
         """.replace('$username', os.getlogin())
 
         try:
-            p = subprocess.Popen(["powershell", command], stdout=subprocess.PIPE)
+            p = subprocess.Popen(["powershell", command], stdout=subprocess.PIPE, startupinfo=startupinfo)
             output = p.communicate()
             data = output[0].decode('utf-8', 'ignore')
             return json.loads(data)
