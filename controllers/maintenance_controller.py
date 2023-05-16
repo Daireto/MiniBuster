@@ -8,7 +8,6 @@ from starlette.templating import _TemplateResponse
 from lib import BaseController
 from services.maintenance_service import BrowsersConfig, MaintenanceService, Config
 
-
 class MaintenanceController(BaseController):
 
     service = MaintenanceService()
