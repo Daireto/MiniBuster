@@ -1,22 +1,41 @@
+const init = () => {
+    const newResultListHeight = $('#maintenance-view-container').height();
+    if (newResultListHeight) {
+        $('#deleted-files').height(newResultListHeight - 144);
+    }
+
+    $('#delete-config-form').hide();
+    $('#maintenance-result').hide();
+    $('#deleted-temp-files-container').hide();
+    $('#deleted-recycle-bin-files-container').hide();
+    $('#deleted-chrome-files-container').hide();
+    $('#deleted-edge-files-container').hide();
+    $('#deleted-opera-files-container').hide();
+    $('#no-deleted-files-container').hide();
+
+    showSpinner();
+}
+
 const checkBrowser = () => {
     const userAgent = navigator.userAgent;
-    if (userAgent.match(/chrome|chromium|crios/i)) {
-        if($('#chrome-history').prop('checked') || $('#chrome-cache').prop('checked') || $('#chrome-cookies').prop('checked') || $('#chrome-extensions').prop('checked') || $('#chrome-passwords').prop('checked')) {
+    if (userAgent.match(/edg/i)) {
+        if($('#edge-history').prop('checked') || $('#edge-cache').prop('checked') || $('#edge-cookies').prop('checked') || $('#edge-extensions').prop('checked') || $('#edge-passwords').prop('checked')) {
             return true;
         }
         return false;
-    // } else if (userAgent.match(/firefox|fxios/i)) {
-    //     if($('#firefox-history').prop('checked') || $('#firefox-cache').prop('checked') || $('#firefox-cookies').prop('checked') || $('#firefox-extensions').prop('checked') || $('#firefox-passwords').prop('checked')) {
-    //         return true;
-    //     }
-    //     return false;
     } else if (userAgent.match(/opr\//i)) {
         if($('#opera-history').prop('checked') || $('#opera-cache').prop('checked') || $('#opera-cookies').prop('checked') || $('#opera-extensions').prop('checked') || $('#opera-passwords').prop('checked')) {
             return true;
         }
         return false;
-    } else if (userAgent.match(/edg/i)) {
-        if($('#edge-history').prop('checked') || $('#edge-cache').prop('checked') || $('#edge-cookies').prop('checked') || $('#edge-extensions').prop('checked') || $('#edge-passwords').prop('checked')) {
+    // TODO: Uncomment when firefox method are implemented
+    // } else if (userAgent.match(/firefox|fxios/i)) {
+    //     if($('#firefox-history').prop('checked') || $('#firefox-cache').prop('checked') || $('#firefox-cookies').prop('checked') || $('#firefox-extensions').prop('checked') || $('#firefox-passwords').prop('checked')) {
+    //         return true;
+    //     }
+    //     return false;
+    } else if (userAgent.match(/chrome|chromium|crios/i)) {
+        if($('#chrome-history').prop('checked') || $('#chrome-cache').prop('checked') || $('#chrome-cookies').prop('checked') || $('#chrome-extensions').prop('checked') || $('#chrome-passwords').prop('checked')) {
             return true;
         }
         return false;
@@ -149,18 +168,10 @@ const getData = async () => {
     $('#opera-passwords').prop('checked', config.browsers.opera.passwords);
 }
 
+init();
+
 $(document).ready(async () => {
     await getData();
     hideSpinner();
     $('#delete-config-form').show();
 });
-
-$('#delete-config-form').hide();
-$('#maintenance-result').hide();
-$('#deleted-temp-files-container').hide();
-$('#deleted-recycle-bin-files-container').hide();
-$('#deleted-chrome-files-container').hide();
-$('#deleted-edge-files-container').hide();
-$('#deleted-opera-files-container').hide();
-$('#no-deleted-files-container').hide();
-showSpinner();
