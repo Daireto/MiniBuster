@@ -1,3 +1,3 @@
-MiniBuster
+# MiniBuster
 
-Descarga MiniBuster desde [aquí](#https://daireto.github.io/MiniBuster/)
+### Descarga MiniBuster desde [aquí](https://daireto.github.io/MiniBuster/)
